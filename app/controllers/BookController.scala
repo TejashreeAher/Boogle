@@ -36,7 +36,6 @@ class BookController @Inject()(service: BookService,
   def searchPageByNumberAndBook(book: String, number: Int) = Action.async{ request =>
    try{
       val queryMap = Map("book" -> book, "page_number" -> number.toString)
-      println("In controller")
       service.searchPageByQueryMap(queryMap)
         .map{
           result => {
@@ -53,7 +52,6 @@ class BookController @Inject()(service: BookService,
         }
     }catch{
       case e:RuntimeException => {
-        println("Caught search exception")
         badRequest(e)
       }
       case ex: Exception => badRequest(ex)
@@ -85,7 +83,6 @@ class BookController @Inject()(service: BookService,
         }
     }catch{
       case e:RuntimeException => {
-        println("Caught search exception")
         badRequest(e)
       }
       case ex: Exception => badRequest(ex)
@@ -107,11 +104,9 @@ class BookController @Inject()(service: BookService,
             case false => InternalServerError
           }
       }
-
   }
 
   private def badRequest(ex: SearchException) = {
-    println("handle exception here ********")
     Future.successful(
       BadRequest(
         Json.obj(
@@ -121,7 +116,6 @@ class BookController @Inject()(service: BookService,
   }
 
   private def badRequest(ex: Exception) = {
-    println("Calling badrequest")
     Future.successful(
       NotAcceptable(
         Json.obj(

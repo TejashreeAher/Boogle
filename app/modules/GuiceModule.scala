@@ -11,7 +11,6 @@ class GuiceModule extends AbstractModule {
     bind(classOf[Connection]).toProvider(classOf[DBConnectionProvider]).asEagerSingleton()
     bind(classOf[AppConfig]).asEagerSingleton()
     bind(classOf[BookDao]).asEagerSingleton()
-//    bind(classOf[DataLoader]).asEagerSingleton()
   }
 
 }

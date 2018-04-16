@@ -55,12 +55,10 @@ class BookService @Inject()(dao: BookDao,
         val parsedResponse = response.status match {
           case 201 => {
             ///success
-            LOGGER.info(s"RESPONSE IS **************** ${response.body}")
             true
           }
           case 200 => {
             ///success
-            LOGGER.info(s"RESPONSE IS **************** ${response.body}")
             true
           }
           case _ => {
@@ -75,7 +73,6 @@ class BookService @Inject()(dao: BookDao,
 
   def searchPageByQueryMap(queryMap : Map[String, String]): Future[Either[Option[String],Option[ElasticSearchResponse]]] = {
     val requestBody = Json.toJson(ElasticSearchModel(queryMap))
-    println(s"Request body is : ${requestBody}")
     val request = ws.url(s"http://${config.ELASTIC_SEARCH_CONFIG.host}:${config.ELASTIC_SEARCH_CONFIG.port}/${config.ELASTIC_SEARCH_CONFIG.index}/_search")
       .addHttpHeaders("Content-Type" -> "application/json")
       .withRequestTimeout(Duration.create(1000, TimeUnit.MILLISECONDS))
@@ -86,16 +83,14 @@ class BookService @Inject()(dao: BookDao,
         val parsedResponse = response.status match {
           case 200 => {
             ///success
-            LOGGER.info(s"RESPONSE IS **************** ${response.body}")
             Right(parseResponse(response.body))
           }
           case 404 => {
-            LOGGER.info(s"RESPONSE IS **************** 404 found ")
+            LOGGER.info("404 found ")
 //            throw new RuntimeException("Index not found ")
             Left(Option("Index not found"))
           }
           case _ => {
-            LOGGER.info(s"RESPONSE IS ****************  found ")
 //            throw new RuntimeException("Search Exception")
             Left(Option("Error Searching index"))
           }

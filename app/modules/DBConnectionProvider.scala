@@ -10,7 +10,6 @@ import play.db._
 class DBConnectionProvider @Inject()(db: Database) extends Provider[Connection]{
 
   override def get(): Connection = {
-    println("************* getting connection")
     db.getConnection()
   }
 }

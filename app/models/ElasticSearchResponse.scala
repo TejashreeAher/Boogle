@@ -39,5 +39,3 @@ object ElasticSearchResponse {
 }
 
 case class ElasticSearchResponse(parsedResponse: Array[ParsedResponse])
-
-//case class ElasticSearchResponse(searchHit : ElasticSearchHit)

@@ -10,7 +10,6 @@ class BookDao @Inject()(db: Database){
 
     def getPageByNumber(bookName: String, pageNumber : Int) ={
         val conn = db.getConnection
-        println(s"************* connection is : ${conn}")
         try {
             val stmt = conn.createStatement
             val rs = stmt.executeQuery(s"SELECT p.id, p.page_number, p.chapter, p.content, b.title, b.author from Pages p left join Books b on p.book_id=b.id where p.page_number = ${pageNumber} and b.title = '${bookName}' ")
