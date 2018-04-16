@@ -63,7 +63,7 @@ class BookService @Inject()(dao: BookDao,
           }
           case _ => {
             LOGGER.info(s"status is ${response.status}")
-            throw SearchException("Search Exception")
+            false
           }
         }
         parsedResponse
@@ -72,6 +72,7 @@ class BookService @Inject()(dao: BookDao,
   }
 
   def searchPageByQueryMap(queryMap : Map[String, String]): Future[Either[Option[String],Option[ElasticSearchResponse]]] = {
+   println(s"Search for ${queryMap}")
     val requestBody = Json.toJson(ElasticSearchModel(queryMap))
     val request = ws.url(s"http://${config.ELASTIC_SEARCH_CONFIG.host}:${config.ELASTIC_SEARCH_CONFIG.port}/${config.ELASTIC_SEARCH_CONFIG.index}/_search")
       .addHttpHeaders("Content-Type" -> "application/json")
@@ -87,11 +88,9 @@ class BookService @Inject()(dao: BookDao,
           }
           case 404 => {
             LOGGER.info("404 found ")
-//            throw new RuntimeException("Index not found ")
             Left(Option("Index not found"))
           }
           case _ => {
-//            throw new RuntimeException("Search Exception")
             Left(Option("Error Searching index"))
           }
         }

@@ -5,9 +5,9 @@ import javax.inject.Inject
 import org.slf4j.LoggerFactory
 import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, ControllerComponents}
-import services.{BookService, SearchException}
+import services.BookService
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class BookController @Inject()(service: BookService,
                                cc: ControllerComponents)
@@ -34,7 +34,6 @@ class BookController @Inject()(service: BookService,
     * @return - Json representing details of the page with its content
     */
   def searchPageByNumberAndBook(book: String, number: Int) = Action.async{ request =>
-   try{
       val queryMap = Map("book" -> book, "page_number" -> number.toString)
       service.searchPageByQueryMap(queryMap)
         .map{
@@ -46,16 +45,12 @@ class BookController @Inject()(service: BookService,
                   case Some(r) => Ok(Json.toJson(r))
                 }
               }
-              case Left(r) => throw new RuntimeException
+              case Left(r) => {
+                InternalServerErrorResponse(r.get)
+              }
             }
           }
         }
-    }catch{
-      case e:RuntimeException => {
-        badRequest(e)
-      }
-      case ex: Exception => badRequest(ex)
-    }
   }
 
   /**
@@ -66,27 +61,20 @@ class BookController @Inject()(service: BookService,
     */
   def searchPageByText(text: String) = Action.async{ request =>
     val queryMap = Map("content" -> text)
-    try{
-      service.searchPageByQueryMap(queryMap)
-        .map{
-          result => {
-            result match {
-              case Right(r) => {
-                r match {
-                  case None => Ok("[]")
-                  case Some(r) => Ok(Json.toJson(r))
-                }
+    service.searchPageByQueryMap(queryMap)
+      .map{
+        result => {
+          result match {
+            case Right(r) => {
+              r match {
+                case None => Ok("[]")
+                case Some(r) => Ok(Json.toJson(r))
               }
-              case Left(r) => throw new RuntimeException(r.get)
             }
+            case Left(r) => InternalServerErrorResponse(r.get)
           }
         }
-    }catch{
-      case e:RuntimeException => {
-        badRequest(e)
       }
-      case ex: Exception => badRequest(ex)
-    }
 
   }
 
@@ -97,31 +85,26 @@ class BookController @Inject()(service: BookService,
     * @return - String in case of success and excpetion in case of error
     */
   def indexPage(id: Int) = Action.async {request =>
-      service.indexPageById(id)
+    service.indexPageById(id)
       .map{result =>
-          result match {
-            case true => Ok(s"Indexed page with id : ${id}")
-            case false => InternalServerError
-          }
+        result match {
+          case true => Ok(s"Indexed page with id : ${id}")
+          case false => InternalServerError
+        }
       }
   }
 
-  private def badRequest(ex: SearchException) = {
-    Future.successful(
+  private def badRequest(errorMsg : String) = {
       BadRequest(
         Json.obj(
-          "error" -> ex.message
+          "error" -> errorMsg
         ))
-    )
   }
 
-  private def badRequest(ex: Exception) = {
-    Future.successful(
-      NotAcceptable(
-        Json.obj(
-          "error" -> ex.getMessage
-        ))
-    )
+  private def InternalServerErrorResponse(errorMsg : String) = {
+    InternalServerError(Json.obj(
+      "error" -> errorMsg
+    ))
   }
 
 }
