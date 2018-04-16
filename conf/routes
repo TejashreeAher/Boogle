@@ -1,0 +1,9 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+GET /books/get_page                 @controllers.BookController.getPageByNumber(book: String, number: Int)
+GET /books/search_page              @controllers.BookController.searchPageByNumberAndBook(book: String, number: Int)
+GET /books/search_text              @controllers.BookController.searchPageByText(text: String)
+
+GET /index/page/:id                 @controllers.BookController.indexPage(id: Int)

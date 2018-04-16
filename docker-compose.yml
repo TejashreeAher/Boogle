@@ -1,0 +1,15 @@
+version: '3'
+services:
+   database:
+    image: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=boogle
+    ports:
+      - '13306:3306'
+    container_name: boogle_database
+
+   elasticsearch:
+    image: elasticsearch
+    ports:
+      - 9200:9200
