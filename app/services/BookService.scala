@@ -76,7 +76,7 @@ class BookService @Inject()(dao: BookDao,
   def searchPageByQueryMap(queryMap : Map[String, String]): Future[Either[Option[String],Option[ElasticSearchResponse]]] = {
     val requestBody = Json.toJson(ElasticSearchModel(queryMap))
     println(s"Request body is : ${requestBody}")
-    val request = ws.url(s"http://${config.ELASTIC_SEARCH_CONFIG.host}:${config.ELASTIC_SEARCH_CONFIG.port}/${config.ELASTIC_SEARCH_CONFIG.index}uy/_search")
+    val request = ws.url(s"http://${config.ELASTIC_SEARCH_CONFIG.host}:${config.ELASTIC_SEARCH_CONFIG.port}/${config.ELASTIC_SEARCH_CONFIG.index}/_search")
       .addHttpHeaders("Content-Type" -> "application/json")
       .withRequestTimeout(Duration.create(1000, TimeUnit.MILLISECONDS))
       .post(requestBody)

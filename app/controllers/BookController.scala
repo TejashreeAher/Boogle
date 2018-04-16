@@ -103,7 +103,7 @@ class BookController @Inject()(service: BookService,
       service.indexPageById(id)
       .map{result =>
           result match {
-            case true => Ok("Indexed page")
+            case true => Ok(s"Indexed page with id : ${id}")
             case false => InternalServerError
           }
       }
